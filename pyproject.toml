@@ -1,0 +1,29 @@
+[tool.briefcase]
+project_name = "乐转站"
+bundle = "com.qiugl.picksound"
+version = "5.8.6"
+url = "https://www.gequhai.com"
+author = "邱公伦"
+author_email = ""
+
+[tool.briefcase.app.picksound_android]
+formal_name = "乐转站"
+description = "音乐搜索下载 + 批量下载 + 格式转换 + 音频提取"
+icon = "resources/icon"
+sources = ["src/picksound_android"]
+requires = []
+supported = True
+
+# Android 特有配置
+[tool.briefcase.app.picksound_android.android]
+requires = []
+
+# 桌面版也支持
+[tool.briefcase.app.picksound_android.windows]
+requires = []
+
+[tool.briefcase.app.picksound_android.macOS]
+requires = []
+
+[tool.briefcase.app.picksound_android.linux]
+requires = ["libcanberra-gtk3-module"]
