@@ -32,8 +32,15 @@ jobs:
           buildozer android debug
         timeout-minutes: 25
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: picksound-android
           path: bin/*.apk
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: picksound v1.0.0
+          files: bin/*.apk
