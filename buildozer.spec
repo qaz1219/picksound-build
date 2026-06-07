@@ -4,6 +4,7 @@ package.name = picksound_android
 package.domain = com.qiugl
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ttf,ico
+source.exclude_patterns = build_apk.py,core.py,build.py
 version = 5.8.6
 requirements = python3,kivy
 orientation = portrait
@@ -19,7 +20,6 @@ android.icon = icon.png
 android.presplash = presplash.png
 android.logcat_filters = *:S python:D
 
-# Only build for arm64-v8a (modern phones)
 android.archs = arm64-v8a
 android.accept_sdk_license = True
 
