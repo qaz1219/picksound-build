@@ -31,7 +31,7 @@ class PickSoundAndroid(toga.App):
     # ==================== UI 构建 ====================
 
     def _build_ui(self):
-        """构建主界面：顶部分页标签 + 内容区"""
+        """构建主界面:顶部分页标签 + 内容区"""
         outer = toga.Box(style=Pack(direction=COLUMN, flex=1))
 
         # 顶部标题
@@ -230,7 +230,7 @@ class PickSoundAndroid(toga.App):
             return
         idx = int(sel.data[0]) - 1
         item = self._search_results[idx]
-        self.status_label.text = f"提示: 移动端试听功能需浏览器支持，请下载后播放"
+        self.status_label.text = f"提示: 移动端试听功能需浏览器支持,请下载后播放"
 
     # ==================== 批量下载页 ====================
 
@@ -238,7 +238,7 @@ class PickSoundAndroid(toga.App):
         box = toga.Box(style=Pack(direction=COLUMN, padding=10))
 
         hint = toga.Label(
-            "每行输入一首歌名，或粘贴 TXT 文件内容",
+            "每行输入一首歌名,或粘贴 TXT 文件内容",
             style=Pack(padding=(0, 0, 5, 0), font_size=11, color="#666"),
         )
         box.add(hint)
@@ -401,7 +401,7 @@ class PickSoundAndroid(toga.App):
         self.option_container.add("格式转换", box)
 
     def _on_convert_mode_change(self, widget):
-        """切换音频/视频转换模式，自动更新格式列表"""
+        """切换音频/视频转换模式,自动更新格式列表"""
         if widget.value == "音频转换":
             self.convert_fmt.items = ["mp3", "aac", "m4a", "wav", "flac", "ogg", "wma", "opus"]
         else:
@@ -438,7 +438,7 @@ class PickSoundAndroid(toga.App):
 
         ffmpeg = find_ffmpeg()
         if not ffmpeg:
-            self.status_label.text = "ffmpeg 未安装，无法转换"
+            self.status_label.text = "ffmpeg 未安装,无法转换"
             return
 
         self.convert_start_btn.enabled = False
@@ -553,7 +553,7 @@ class PickSoundAndroid(toga.App):
 
         ffmpeg = find_ffmpeg()
         if not ffmpeg:
-            self.status_label.text = "ffmpeg 未安装，无法提取音频"
+            self.status_label.text = "ffmpeg 未安装,无法提取音频"
             return
 
         save_dir = self.dir_input.value or self.save_dir
