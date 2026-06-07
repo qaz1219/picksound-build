@@ -6,22 +6,18 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build APK with Buildozer
-        uses: wildspider57389928/Buildozer-Kivy-APK_Creator@4.0.0
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
         with:
-          project-dir: .
-          command: buildozer android debug
+          workdir: .
+          buildozer_cmd: buildozer android debug
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: picksound-android
-          path: |
-            *.apk
-            bin/*.apk
+          path: bin/*.apk
