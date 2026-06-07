@@ -170,7 +170,7 @@ class BatchTab(TabbedPanelItem):
         layout = BoxLayout(orientation="vertical", padding=10, spacing=8)
 
         layout.add_widget(Label(
-            text="每行输入一首歌名，或粘贴 TXT 内容",
+            text="每行输入一首歌名,或粘贴 TXT 内容",
             size_hint_y=None, height=24, color=(0.4, 0.4, 0.4, 1),
         ))
 
@@ -301,7 +301,7 @@ class ConvertTab(TabbedPanelItem):
         self.add_widget(layout)
 
     def _add_files(self, instance):
-        # Android 上需要通过文件选择器，这里简化处理
+        # Android 上需要通过文件选择器,这里简化处理
         self.status_label.text = "请在文件管理器中分享文件到本应用"
 
     def _clear(self, instance):
@@ -376,4 +376,4 @@ class PicksoundApp(App):
 
 if __name__ == "__main__":
     PicksoundApp().run()
-（内容由AI生成，仅供参考）
+(内容由AI生成,仅供参考)
