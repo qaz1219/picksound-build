@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-乐转站 v5.8.6 Android 版 — 核心逻辑（提取自桌面版 V20.3.0）
+乐转站 v5.8.6 Android 版 — 核心逻辑(提取自桌面版 V20.3.0)
 音乐搜索 / 下载 / 格式转换 / 音频提取
 """
 
@@ -91,7 +91,7 @@ def find_ffprobe():
 
 
 def get_media_duration(file_path):
-    """获取媒体文件时长（秒）"""
+    """获取媒体文件时长(秒)"""
     ffprobe = find_ffprobe()
     if not ffprobe:
         return 0
@@ -114,7 +114,7 @@ class MusicCore:
 
     @staticmethod
     def search(keyword):
-        """搜索歌曲，返回结果列表 [{song, artist, play_url, source}]"""
+        """搜索歌曲,返回结果列表 [{song, artist, play_url, source}]"""
         url = f"{BASE_URL}/s/{urllib.parse.quote(keyword)}"
         html = http_get(url)
         results = []
@@ -138,7 +138,7 @@ class MusicCore:
 
     @staticmethod
     def get_play_info(play_url):
-        """获取播放页面信息，返回 (play_id, mp3_type)"""
+        """获取播放页面信息,返回 (play_id, mp3_type)"""
         html = http_get(play_url)
         pid = re.search(r"window\.play_id\s*=\s*'([^']+)'", html)
         if not pid:
@@ -167,8 +167,8 @@ class MusicCore:
     @staticmethod
     def download(song_name, artist, play_url, save_dir, progress_cb=None):
         """
-        下载单首歌曲，返回保存路径。
-        progress_cb(percent) 为可选进度回调。
+        下载单首歌曲,返回保存路径.
+        progress_cb(percent) 为可选进度回调.
         """
         play_id, mp3_type = MusicCore.get_play_info(play_url)
         dl_url = MusicCore.get_download_url(play_id, mp3_type)
@@ -226,7 +226,7 @@ class MusicCore:
                     if progress_cb and total > 0:
                         progress_cb(int(downloaded / total * 100))
 
-        # 如果下载的是非 MP3 格式，自动转 MP3
+        # 如果下载的是非 MP3 格式,自动转 MP3
         if ext != ".mp3":
             mp3_path = out_path.rsplit(".", 1)[0] + ".mp3"
             if MusicCore.convert_audio(out_path, mp3_path, "mp3"):
@@ -240,10 +240,10 @@ class MusicCore:
 
     @staticmethod
     def convert_audio(src_path, dst_path, target_format):
-        """音频格式转换，成功返回 True"""
+        """音频格式转换,成功返回 True"""
         ffmpeg = find_ffmpeg()
         if not ffmpeg:
-            raise Exception("ffmpeg 未安装，无法转换格式")
+            raise Exception("ffmpeg 未安装,无法转换格式")
 
         codec_map = {
             "mp3": "libmp3lame", "aac": "aac", "m4a": "aac",
@@ -272,7 +272,7 @@ class MusicCore:
         """视频格式转换"""
         ffmpeg = find_ffmpeg()
         if not ffmpeg:
-            raise Exception("ffmpeg 未安装，无法转换格式")
+            raise Exception("ffmpeg 未安装,无法转换格式")
 
         codec_map = {"mp4": "libx264", "avi": "mpeg4", "mkv": "libx264",
                      "mov": "libx264", "webm": "libvpx", "wmv": "wmv2",
@@ -297,7 +297,7 @@ class MusicCore:
         """从视频中提取音频"""
         ffmpeg = find_ffmpeg()
         if not ffmpeg:
-            raise Exception("ffmpeg 未安装，无法提取音频")
+            raise Exception("ffmpeg 未安装,无法提取音频")
 
         codec_map = {"mp3": "libmp3lame", "aac": "aac", "m4a": "aac",
                      "wav": "pcm_s16le", "flac": "flac", "ogg": "libvorbis"}
@@ -321,7 +321,7 @@ class MusicCore:
 
 def batch_download(song_list, save_dir, progress_cb=None, item_cb=None):
     """
-    批量下载。
+    批量下载.
     song_list: [(song_name, artist), ...] 或 [song_name, ...]
     progress_cb(n, total): 整体进度
     item_cb(idx, status, path): 单首结果回调
