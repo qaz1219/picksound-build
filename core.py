@@ -15,6 +15,7 @@ import subprocess
 import shutil
 import threading
 
+import http.cookiejar
 
 # ==================== 常量 ====================
 
@@ -137,41 +138,54 @@ class MusicCore:
         return results
 
     @staticmethod
+    @staticmethod
     def get_play_info(play_url):
-        """获取播放页面信息,返回 (play_id, mp3_type)"""
-        html = http_get(play_url)
+        """获取播放页面信息,返回 (play_id, mp3_type, cookie_opener)"""
+        cj = http.cookiejar.CookieJar()
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+        req = urllib.request.Request(play_url, headers={"User-Agent": UA})
+        with opener.open(req, timeout=15) as resp:
+            html = resp.read().decode("utf-8", errors="ignore")
         pid = re.search(r"window\.play_id\s*=\s*'([^']+)'", html)
         if not pid:
             raise Exception("无法解析 play_id")
         mt = re.search(r"window\.mp3_type\s*=\s*(-?\d+)", html)
-        return pid.group(1), int(mt.group(1)) if mt else 0
+        return pid.group(1), int(mt.group(1)) if mt else 0, opener
 
     @staticmethod
-    def get_download_url(play_id, mp3_type=0):
-        """获取下载直链 URL"""
+    def get_download_url(play_id, mp3_type=0, opener=None, referer=None):
+        """获取下载直链 URL,需传入 cookie opener 维持会话"""
         decoded_id = urllib.parse.unquote(play_id)
-        result = http_post(
-            f"{BASE_URL}/api/music",
-            {"id": decoded_id, "type": str(mp3_type)},
-            extra_headers={"X-Requested-With": "XMLHttpRequest",
-                           "Accept": "application/json, text/javascript, */*; q=0.01",
-                           "Referer": BASE_URL},
-        )
-        data = json.loads(result)
-        if data.get("code") == 200 and data.get("data", {}).get("url"):
-            return data["data"]["url"]
-        # 备用: 直接拼接
-        encoded = urllib.parse.quote(play_id, safe="")
-        return f"{BASE_URL}/api/music?id={encoded}&type={mp3_type}"
+        data = urllib.parse.urlencode({"id": decoded_id, "type": str(mp3_type)}).encode()
+        req = urllib.request.Request(f"{BASE_URL}/api/music", data=data, method="POST")
+        req.add_header("User-Agent", UA)
+        req.add_header("Content-Type", "application/x-www-form-urlencoded")
+        req.add_header("X-Requested-With", "Http")
+        req.add_header("X-Custom-Header", "Key")
+        req.add_header("Accept", "application/json, text/javascript, */*; q=0.01")
+        if referer:
+            req.add_header("Referer", referer)
+        else:
+            req.add_header("Referer", BASE_URL)
 
+        if opener:
+            with opener.open(req, timeout=15) as resp:
+                result = json.loads(resp.read().decode("utf-8", errors="ignore"))
+        else:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                result = json.loads(resp.read().decode("utf-8", errors="ignore"))
+
+        if result.get("code") == 200 and result.get("data", {}).get("url"):
+            return result["data"]["url"]
+        raise Exception(f"获取下载链接失败: {result.get('msg', '未知错误')}")
     @staticmethod
     def download(song_name, artist, play_url, save_dir, progress_cb=None):
         """
         下载单首歌曲,返回保存路径.
         progress_cb(percent) 为可选进度回调.
         """
-        play_id, mp3_type = MusicCore.get_play_info(play_url)
-        dl_url = MusicCore.get_download_url(play_id, mp3_type)
+        play_id, mp3_type, opener = MusicCore.get_play_info(play_url)
+        dl_url = MusicCore.get_download_url(play_id, mp3_type, opener=opener, referer=play_url)
 
         # 生成安全文件名
         safe_name = f"{song_name} - {artist}"
